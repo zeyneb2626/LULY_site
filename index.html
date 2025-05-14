@@ -4,130 +4,155 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Configurateur Tradi'home</title>
-  <!-- model-viewer Web Component -->
-  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+  <script type="module"
+    src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js">
+  </script>
   <style>
-    body { margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, sans-serif; color:#333; }
-    #configurator { display: flex; flex-wrap: wrap; gap:2rem; max-width:1200px; margin:2rem auto; }
-    .viewer { flex:2; }
-    model-viewer { width:100%; height:480px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1); }
-    #features { flex:1; display:flex; flex-direction:column; gap:1rem; margin-top:1rem; }
-    .group { background:#fafafa; padding:1rem; border-radius:6px; box-shadow:0 1px 4px rgba(0,0,0,0.05); }
-    .group h4 { margin:0 0 .5rem; font-size:1.1rem; font-weight:600; }
-    .group button { display:block; width:100%; margin:.3rem 0; padding:.8rem; border:1px solid #ddd; border-radius:4px; background:#fff; cursor:pointer; text-align:center; font-size:.95rem; }
-    .group button.selected { border-color:#2962ff; box-shadow:0 0 0 2px rgba(41,98,255,0.2); }
-    #price { font-size:1.1rem; font-weight:600; margin-top:1rem; }
+    body { margin:0; font-family:sans-serif; }
+    #configurator { display:flex; height:100vh; }
+    .viewer { flex:3; }
+    model-viewer { width:100%; height:100%; }
+    #features { flex:1; padding:20px; box-sizing:border-box; overflow-y:auto; }
+    .group { margin-bottom:20px; }
+    .group h4 { margin:0 0 .5em; }
+    .group button {
+      display:block;
+      width:100%;
+      padding:10px;
+      margin-bottom:5px;
+      border:1px solid #ccc;
+      background:#fff;
+      cursor:pointer;
+      text-align:center;
+    }
+    .group button.selected {
+      border-color:#357EDD;
+      background:#E6F0FF;
+    }
+    #price { font-size:1.2em; font-weight:bold; margin-top:20px; }
   </style>
 </head>
 <body>
   <div id="configurator">
     <div class="viewer">
-      <!-- pointe vers ton GLB à la racine du repo -->
       <model-viewer
         id="model"
-        src="./Tradi_home2_draco.glb"
+        src="Tradi_home2_draco2.glb"
         camera-controls
         auto-rotate
-        ar
         background-color="#ffffff">
       </model-viewer>
     </div>
     <div id="features">
+      <!-- Bardage -->
       <div class="group" data-cat="bardage">
         <h4>Bardage extérieur</h4>
-        <button data-color="#ffffff" data-cost="0">Blanc inclus</button>
-        <button data-color="#8c6a4f" data-cost="799">Chêne foncé +799 €</button>
-        <button data-color="#343a40" data-cost="899">Gris orage +899 €</button>
+        <button data-color="#ffffff" data-cost="0">Option 1 +0 €</button>
+        <button data-color="#8c6a4f" data-cost="799">Option 2 +799 €</button>
+        <button data-color="#343a40" data-cost="899">Option 3 +899 €</button>
       </div>
+      <!-- Menuiserie -->
       <div class="group" data-cat="menuiserie">
         <h4>Menuiserie alu</h4>
         <button data-color="#ffffff" data-cost="0">Blanc +0 €</button>
-        <button data-color="#2e2e2e" data-cost="2499">Anthracite +2 499 €</button>
+        <button data-color="#2e2e2e" data-cost="2499">Anthracite +2499 €</button>
       </div>
+      <!-- Gouttière -->
       <div class="group" data-cat="gouttiere">
         <h4>Gouttière et descente</h4>
         <button data-color="#ffffff" data-cost="0">Blanc +0 €</button>
         <button data-color="#2e2e2e" data-cost="0">Anthracite +0 €</button>
       </div>
+      <!-- Pergola -->
       <div class="group" data-cat="pergola">
         <h4>Pergola bioclimatique</h4>
         <button data-color="#ffffff" data-cost="8500">Blanc +8 500 €</button>
         <button data-color="#2e2e2e" data-cost="9500">Anthracite +9 500 €</button>
       </div>
+      <!-- Peinture murs -->
       <div class="group" data-cat="peinture">
-        <h4>Peinture mur extérieur</h4>
+        <h4>Peinture murs</h4>
         <button data-color="#ffffff" data-cost="0">Blanc +0 €</button>
-        <button data-color="#e3dbc8" data-cost="999">Beige West +999 €</button>
-        <button data-color="#e4c7ab" data-cost="1499">Ocre Mojave +1 499 €</button>
+        <button data-color="#cfc1af" data-cost="999">Beige Wes +999 €</button>
+        <button data-color="#dfbfa5" data-cost="1499">Ocre Mojave +1 499 €</button>
       </div>
+      <!-- Toiture -->
       <div class="group" data-cat="toiture">
-        <h4>Tôle ondulée</h4>
-        <button data-color="#1e3342" data-cost="0">Bleu ardoise +0 €</button>
-        <button data-color="#9a9a9a" data-cost="0">Gris acier +0 €</button>
-        <button data-color="#bf382e" data-cost="1800">Rouge hibiscus +1 800 €</button>
+        <h4>Toiture tôles</h4>
+        <button data-color="#2e3b47" data-cost="0">Bleu ardoise +0 €</button>
+        <button data-color="#9ea6ac" data-cost="0">Gris acier +0 €</button>
+        <button data-color="#c33b2a" data-cost="1800">Rouge hibiscus +1 800 €</button>
       </div>
+      <p id="price">Prix total : 0 €</p>
     </div>
-    <p id="price">Prix total : 170 000 €</p>
   </div>
 
-  <script type="module">
+  <script>
     console.log('DOM ready');
     const basePrice = 170000;
     const modelViewer = document.getElementById('model');
     const priceEl     = document.getElementById('price');
 
-    // → À remplir avec les VRAIS noms issus de la console.table ci-dessous
-    const materialMap = {
-      bardage:    ['poutre_01','poutre_02'],
-      menuiserie: ['cadre_porte_fenetre'],
-      gouttiere:  ['goutieres'],
-      pergola:    ['poutres','volets_pergola'],
-      peinture:   ['murs'],
-      toiture:    ['toit1']
-    };
-
-    function hexToRGBA(hex){
-      const v = parseInt(hex.slice(1),16);
-      return [(v>>16&255)/255,(v>>8&255)/255,(v&255)/255,1];
-    }
-
-    const selection = {};
-
-    modelViewer.addEventListener('load', () => {
-      console.log('model loaded');
+    // **Étape 1 :** à l’import du GLB, on liste tous les matériaux
+    modelViewer.addEventListener('load', ()=> {
       const mats = modelViewer.model.materials;
+      console.log('🔧 Liste réelle des matériaux dans le GLB :', Object.keys(mats));
+      // → Va copier/coller ce tableau dans materialMap ci-dessous
 
-      // **DEBUG** : liste tous les matériaux réels du GLB
-      console.log('🛠️ Liste réelle des matériaux dans le GLB :');
-      console.table(Object.keys(mats));
-
-      // attache les clics
-      document.querySelectorAll('.group').forEach(group=>{
+      // **Étape 2 :** on configure les boutons
+      document.querySelectorAll('.group').forEach(group => {
         const cat = group.dataset.cat;
-        group.querySelectorAll('button').forEach(btn=>{
-          btn.addEventListener('click',()=>{
-            // visuel
-            group.querySelectorAll('button').forEach(b=>b.classList.remove('selected'));
+        group.querySelectorAll('button').forEach(btn => {
+          btn.addEventListener('click', () => {
+            // Visuel
+            group.querySelectorAll('button')
+              .forEach(b => b.classList.remove('selected'));
             btn.classList.add('selected');
-            // prix
+            // Prix
             selection[cat] = Number(btn.dataset.cost);
-            const total = Object.values(selection).reduce((a,b)=>a+b, basePrice);
+            const total = Object.values(selection)
+                              .reduce((a,b)=>a+b, basePrice);
             priceEl.textContent = `Prix total : ${total.toLocaleString()} €`;
-            // couleur
+            // Couleur
             const rgba = hexToRGBA(btn.dataset.color);
-            (materialMap[cat]||[]).forEach(name=>{
+            (materialMap[cat]||[]).forEach(name => {
               if (mats[name]) {
-                mats[name].pbrMetallicRoughness.setBaseColorFactor(rgba);
+                mats[name].pbrMetallicRoughness
+                          .setBaseColorFactor(rgba);
               } else {
                 console.warn(`❌ matériau '${name}' pas trouvé`);
               }
             });
           });
         });
-        // clic par défaut sur la 1ᵉ option
+        // clique automatiquement sur la 1ʳᵉ option
         group.querySelector('button').click();
       });
     });
+
+    // **Étape 3 :** remplis ces tableaux avec *exactement* les clés
+    // que tu as vues en console (`Object.keys(mats)`)
+    const materialMap = {
+      bardage:     [ /* ex. "12", "13" */ ],
+      menuiserie:  [ /* "16" */ ],
+      gouttiere:   [ /* "17" */ ],
+      pergola:     [ /* "18","19" */ ],
+      peinture:    [ /* "20" */ ],
+      toiture:     [ /* "21" */ ]
+    };
+
+    // helper hex → [r,g,b,a]
+    function hexToRGBA(hex){
+      const v = parseInt(hex.slice(1),16);
+      return [
+        (v>>16&255)/255,
+        (v>>8&255)/255,
+        (v&255)/255,
+        1
+      ];
+    }
+
+    const selection = {};
   </script>
 </body>
 </html>
