@@ -1,38 +1,31 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Configurateur Tradi'home</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <!-- model-viewer pour charger le GLB local -->
+  <!-- importer le module model-viewer -->
   <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 
   <style>
-    /* Reset minimal */
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    /* reset basique */
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:-apple-system, BlinkMacSystemFont, sans-serif; color:#333; }
 
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-      line-height: 1.4;
-      color: #333;
-      background: #f7f7f7;
-    }
-
-    /* Conteneur principal */
+    /* conteneur global */
     #configurator {
       display: flex;
       flex-wrap: wrap;
-      gap: 2rem;
       max-width: 1200px;
       margin: 2rem auto;
-      padding: 0 1rem;
+      gap: 2rem;
     }
 
-    /* Zone 3D */
+    /* zone 3D */
     .viewer {
       flex: 2;
-      background: #fff;
+      background: #fafafa;
       border-radius: 8px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
       overflow: hidden;
@@ -41,10 +34,9 @@
       width: 100%;
       height: 480px;
       background-color: #ffffff;
-      /* tu peux changer la couleur de fond ici */
     }
 
-    /* Sidebar options */
+    /* zone d’options */
     #features {
       flex: 1;
       display: grid;
@@ -52,82 +44,100 @@
       gap: 1rem;
     }
     .feature-box {
-      background: #fff;
+      cursor: pointer;
       border: 2px solid #ddd;
       border-radius: 6px;
       padding: 1rem;
       text-align: center;
-      cursor: pointer;
-      transition: border-color 0.2s, box-shadow 0.2s;
+      transition: border-color .2s, box-shadow .2s;
     }
     .feature-box.selected {
-      border-color: #3b82f6;
-      box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
+      border-color: #357edd;
+      box-shadow: 0 0 0 4px rgba(53,126,221,0.2);
     }
     .feature-box h3 {
-      font-size: 1rem;
-      font-weight: 600;
-      line-height: 1.2;
+      font-size: 1.1rem;
+      margin-bottom: .5rem;
+    }
+
+    /* disposition responsive */
+    @media (max-width: 800px) {
+      #configurator { flex-direction: column; }
+      model-viewer { height: 300px; }
     }
   </style>
 </head>
 
 <body>
-  <div id="configurator">
 
-    <!-- Visu 3D -->
+  <div id="configurator">
+    <!-- vue 3D -->
     <div class="viewer">
       <model-viewer
         id="model"
-        src="Tradi_home_draco.glb"
+        src="Tradi_home2_draco.glb"
+        alt="Maison Tradi'home"
         camera-controls
         auto-rotate
-        ar
+        environment-image="neutral"
+        exposure="1"
         background-color="#ffffff">
       </model-viewer>
     </div>
 
-    <!-- Sélecteurs de variante -->
+    <!-- options utilisateur -->
     <div id="features">
-      <!-- Exemple d’option : Blanc inclus -->
-      <div class="feature-box selected" data-material="Blanc">
-        <h3>Blanc<br>Inclus</h3>
+      <!-- Exemple d’option bardage -->
+      <div class="feature-box" data-material="bardage" data-value="blanc">
+        <h3>Bardage Blanc</h3>
+        <p>Inclus</p>
       </div>
 
-      <!-- Ajoute ici tes autres options en copiant-collant ce bloc et en changeant data-material et le texte -->
-      <div class="feature-box" data-material="BeigeAres">
-        <h3>Beige Ares<br>+399 €</h3>
+      <div class="feature-box" data-material="bardage" data-value="ocre">
+        <h3>Bardage Ocre</h3>
+        <p>+1 499 €</p>
       </div>
-      <div class="feature-box" data-material="OcreMojave">
-        <h3>Ocre Mojave<br>+1 499 €</h3>
-      </div>
-      <!-- …etc pour chaque teinte/option -->
-    </div>
 
-  </div>
+      <!-- Exemple d’option toiture -->
+      <div class="feature-box" data-material="toiture" data-value="blanc">
+        <h3>Toiture Zinc</h3>
+        <p>Inclus</p>
+      </div>
+
+      <div class="feature-box" data-material="toiture" data-value="anthracite">
+        <h3>Toiture Anthracite</h3>
+        <p>+1 480 €</p>
+      </div>
+
+      <!-- Ajoute ici autant de .feature-box que tu as de variantes (volets, poutres, etc.) -->
+    </div><!-- /#features -->
+  </div><!-- /#configurator -->
 
   <script>
-    // Si tu veux changer dynamiquement un matériau dans le modèle :
+    // script pour gérer la sélection et changer les matériaux
     const model = document.querySelector('#model');
-    document.querySelectorAll('.feature-box').forEach(box => {
-      box.addEventListener('click', () => {
-        // décocher les autres
-        document.querySelectorAll('.feature-box').forEach(b => b.classList.remove('selected'));
-        box.classList.add('selected');
+    const boxes = document.querySelectorAll('.feature-box');
 
-        // récupère le nom du matériau
-        const matName = box.getAttribute('data-material');
-        // applique la couleur via model-viewer (PBR material)
-        model.model.materials.forEach(m => {
-          if (m.name === matName) {
-            m.pbrMetallicRoughness.setBaseColorFactor([1,1,1,1]);
-          } else {
-            // par défaut on garde blanc
-            m.pbrMetallicRoughness.setBaseColorFactor([1,1,1,1]);
+    boxes.forEach(box => {
+      box.addEventListener('click', () => {
+        // décocher les autres cases de même type
+        boxes.forEach(b => {
+          if (b.dataset.material === box.dataset.material) {
+            b.classList.remove('selected');
           }
         });
+        // cocher la case cliquée
+        box.classList.add('selected');
+
+        // récupérer la valeur et appliquer sur le model-viewer
+        const matName  = box.dataset.material; // ex: "bardage", "toiture"
+        const matValue = box.dataset.value;    // ex: "blanc", "ocre"
+        model.materialVariant = {
+          [matName]: matValue
+        };
       });
     });
   </script>
+
 </body>
 </html>
