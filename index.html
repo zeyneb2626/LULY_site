@@ -1,140 +1,180 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
   <title>Configurateur Tradi'home</title>
-  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <script type="module"
+    src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js">
+  </script>
   <style>
-    body { font-family: sans-serif; margin:0; padding:0; display:flex; }
-    .viewer { flex:1; background:#f0f0f0; display:flex; align-items:center; justify-content:center; }
-    model-viewer { width:100%; height:100vh; }
-    #controls { width:300px; padding:20px; box-shadow:0 0 10px rgba(0,0,0,0.1); }
-    .group { margin-bottom:1.5em; }
-    .group h3 { margin-bottom:.5em; }
-    .group button { display:block; width:100%; margin:4px 0; padding:8px; border:1px solid #ccc; background:#fff; cursor:pointer; text-align:left; }
-    .group button.selected { border-color:#0077cc; background:#e6f2ff; }
-    #price { margin-top:2em; font-weight:bold; font-size:1.2em; text-align:center; }
+    body {
+      margin:0;
+      font-family:sans-serif;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      padding:1rem;
+    }
+    #configurator {
+      display:flex;
+      width:100%;
+      max-width:1200px;
+    }
+    .viewer { flex:1; margin-right:1rem }
+    model-viewer {
+      width:100%; height:600px; background:#f0f0f0;
+    }
+    #features { flex:0 0 300px; }
+    .group { margin-bottom:1rem; }
+    .group h4 { margin:0 0 .5rem; }
+    .group button {
+      display:block;
+      width:100%;
+      padding:.5rem;
+      margin-bottom:.25rem;
+      border:1px solid #ccc;
+      background:#fff;
+      text-align:left;
+      cursor:pointer;
+    }
+    .group button.selected {
+      border-color:#007bff;
+      background:#e7f1ff;
+    }
+    #price {
+      font-weight:bold;
+      margin-top:1rem;
+      text-align:right;
+      width:100%; max-width:1200px;
+    }
   </style>
 </head>
 <body>
+
+<div id="configurator">
   <div class="viewer">
     <model-viewer
       id="model"
-      src="TRADI.glb"
+      src="TRADI2.glb"
       camera-controls
       auto-rotate
       background-color="#ffffff">
     </model-viewer>
   </div>
+  <div id="features">
 
-  <div id="controls">
-    <!-- 1) Bardage -->
     <div class="group" data-cat="bardage">
-      <h3>Bardage extérieur</h3>
+      <h4>Bardage extérieur</h4>
       <button data-color="#ffffff" data-cost="0">Blanc inclus</button>
-      <button data-color="#a67c52" data-cost="0">Chêne clair +0 €</button>
-      <button data-color="#343a40" data-cost="0">Anthracite fixe +0 €</button>
+      <button data-color="#deb887" data-cost="0">Chêne clair +0 €</button>
+      <button data-color="#333333" data-cost="0">Anthracite fixe +0 €</button>
     </div>
 
-    <!-- 2) Murs (peinture) -->
     <div class="group" data-cat="murs">
-      <h3>Peinture murs</h3>
+      <h4>Peinture murs</h4>
       <button data-color="#ffffff" data-cost="0">Blanc +0 €</button>
-      <button data-color="#d0c4a1" data-cost="999">Beige Wes +999 €</button>
-      <button data-color="#e0b499" data-cost="1499">Ocre Mojave +1 499 €</button>
+      <button data-color="#f5f5dc" data-cost="999">Beige Wes +999 €</button>
+      <button data-color="#cd853f" data-cost="1499">Ocre Mojave +1 499 €</button>
     </div>
 
-    <!-- 3) Menuiserie + Volets -->
     <div class="group" data-cat="menuiserie">
-      <h3>Menuiserie alu & volets</h3>
+      <h4>Menuiserie alu & volets</h4>
       <button data-color="#ffffff" data-cost="0">Blanc +0 €</button>
-      <button data-color="#2e2e2e" data-cost="2499">Anthracite +2 499 €</button>
+      <button data-color="#333333" data-cost="2499">Anthracite +2 499 €</button>
     </div>
 
-    <!-- 4) Pergola + volets_p -->
-    <div class="group" data-cat="pergola">
-      <h3>Pergola bioclimatique + volets</h3>
+    <div class="group" data-cat="pergolat">
+      <h4>Pergola + volets</h4>
       <button data-color="#ffffff" data-cost="8500">Blanc +8 500 €</button>
-      <button data-color="#2e2e2e" data-cost="9500">Anthracite +9 500 €</button>
+      <button data-color="#333333" data-cost="9500">Anthracite +9 500 €</button>
     </div>
 
-    <div id="price">Prix total : 170 000 €</div>
   </div>
+</div>
 
-  <script>
-    console.log('DOM ready');
-    const basePrice = 170000;
-    const modelViewer = document.getElementById('model');
-    const priceEl     = document.getElementById('price');
+<p id="price">Prix total : 0 €</p>
 
-    // correspondance = clefs de catégorie → noms EXACTS des matériaux dans ton GLB
-    const materialMap = {
-      bardage: [
-        'poutrine01',
-        'poutrine01.001',
-        'poutrine01.002',
-        'poutrine02',
-        'poutrine02.001',
-        'poutrine02.002'
-      ],
-      murs: [
-        'Murs','Murs.001','Murs.002'
-      ],
-      menuiserie: [
-        'encadrement','encadrement.001','encadrement.002',
-        'cadre_porte_fenetre','cadre_porte_fenetre.001','cadre_porte_fenetre.002',
-        'porte','porte.001','porte.002',
-        'Volets','Volets.001','Volets.002'
-      ],
-      pergola: [
-        'volet_pergolat','volet_pergolat.001','volet_pergolat.002',
-        'poutres','poutres.001','poutres.002'
-      ]
-    };
+<script>
+(function(){
+  const mv = document.getElementById('model');
+  const priceEl = document.getElementById('price');
 
-    // hex → normalized RGBA
-    function hexToRGBA(hex){
-      const v = parseInt(hex.slice(1),16);
-      return [(v>>16&255)/255,(v>>8&255)/255,(v&255)/255,1];
-    }
+  // 1️⃣ Quand le modèle est chargé, on log la liste des mat (index → mat.name)
+  mv.addEventListener('load', ()=> {
+    console.clear();
+    console.log('model loaded');
+    console.log('🔧 Materials in GLB: clé interne → mat.name');
+    Object.entries(mv.model.materials)
+      .forEach(([idx, m]) => console.log(idx, '→', m.name));
+  });
 
-    modelViewer.addEventListener('load', ()=> {
-      console.log('model loaded');
-      const mats = modelViewer.model.materials;
-      console.log('Materials in GLB:', Object.keys(mats));
+  // 2️⃣ Les bons INDICES pour chaque catégorie (d’après tes screenshots)
+  const materialIndices = {
+    bardage:   [15, 16],            // poutrine01, poutrine02
+    murs:      [0, 39, 78],         // Murs, Murs.001, Murs.002
+    menuiserie:[   // encadrements, portes, volets
+      7,46,85,  // encadrement et ses variantes
+      2,41,80,  // cadre_porte_fenetre
+      4,43,82,  // porte
+      5,44,83   // Volets
+    ],
+    pergolat:  [26,66,106, 24,64,104]  // volet_pergola + poutres et variantes
+  };
 
-      document.querySelectorAll('.group').forEach(group=>{
-        const cat = group.dataset.cat;
-        group.querySelectorAll('button').forEach(btn=>{
-          btn.addEventListener('click',()=>{
-            // visuel sélection
-            group.querySelectorAll('button').forEach(b=>b.classList.remove('selected'));
-            btn.classList.add('selected');
+  // Convertit "#rrggbb" → [r,g,b,a]
+  function hexToFactor(h){
+    const v = parseInt(h.slice(1),16);
+    return [
+      ((v>>16)&255)/255,
+      ((v>>8)&255)/255,
+      (v&255)/255,
+      1
+    ];
+  }
 
-            // mise à jour prix
-            selection[cat] = Number(btn.dataset.cost);
-            const total = Object.values(selection).reduce((a,b)=>a+b,basePrice);
-            priceEl.textContent = `Prix total : ${total.toLocaleString()} €`;
+  // Applique une couleur à TOUTES les indices de la catégorie
+  function applyColor(cat, hex){
+    const list = materialIndices[cat] || [];
+    const factor = hexToFactor(hex);
+    list.forEach(i => {
+      const mat = mv.model.materials[i];
+      if(!mat){
+        console.warn(`⚠ Indice ${i} introuvable pour ${cat}`);
+      } else {
+        mat.pbrMetallicRoughness.setBaseColorFactor(factor);
+      }
+    });
+  }
 
-            // couleur
-            const rgba = hexToRGBA(btn.dataset.color);
-            (materialMap[cat]||[]).forEach(name=>{
-              const m = mats[name];
-              if (m) {
-                m.pbrMetallicRoughness.setBaseColorFactor(rgba);
-              } else {
-                console.warn(`❌ matériau '${name}' pas trouvé`);
-              }
-            });
-          });
-        });
-        // clic par défaut sur la première option
-        group.querySelector('button').click();
+  // Met à jour le prix total
+  function updatePrice(){
+    const total = Array.from(
+      document.querySelectorAll('button.selected')
+    ).reduce((sum,btn)=> sum + Number(btn.dataset.cost), 0);
+    priceEl.textContent = 
+      `Prix total : ${total.toLocaleString('fr-FR')} €`;
+  }
+
+  // 3️⃣ On branche les UI
+  document.querySelectorAll('#features .group').forEach(group=>{
+    const cat = group.dataset.cat;
+    group.querySelectorAll('button').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        // UI
+        group.querySelectorAll('button')
+             .forEach(b=> b.classList.remove('selected'));
+        btn.classList.add('selected');
+        // Couleur
+        applyColor(cat, btn.dataset.color);
+        // Prix
+        updatePrice();
       });
     });
+  });
 
-    const selection = {};
-  </script>
+})();
+</script>
+
 </body>
 </html>
