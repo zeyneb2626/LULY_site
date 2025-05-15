@@ -1,102 +1,110 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Configurateur Tradi'home</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Configurateur Tradi’home</title>
+
+  <!-- model-viewer -->
   <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+
   <style>
-    body { margin:0; font-family:sans-serif; background:#f0f0f0 }
-    #configurator { display:flex; max-width:1200px; margin:auto; padding:2rem; gap:2rem }
-    .viewer { flex:2 }
-    model-viewer { width:100%; height:600px; background:#fff; border-radius:8px }
-    #features { flex:1; display:flex; flex-direction:column; gap:1rem }
-    .group { background:#fff; border-radius:8px; padding:1rem }
-    .group h4 { margin:0 0 .5rem }
-    .group button {
-      display:block; width:100%; margin:.25rem 0; padding:.75rem;
-      border:1px solid #ccc; border-radius:6px; background:#fafafa;
-      cursor:pointer; font-weight:bold;
-    }
-    .group button.selected { border-color:#3377ff }
-    #price { margin-top:1rem; font-size:1.2rem }
+    body { margin:0; font-family: sans-serif; background:#f0f0f0; }
+    #configurator { display:flex; max-width:1200px; margin:2rem auto; gap:2rem; }
+    .viewer { flex:1; background:#fff; padding:1rem; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,.1); }
+    model-viewer { width:100%; height:600px; }
+    #features { width:300px; display:flex; flex-direction:column; gap:1rem; }
+    .group { background:#fff; padding:1rem; border-radius:8px; box-shadow:0 1px 4px rgba(0,0,0,.1); }
+    .group h4 { margin:0 0 .5rem; font-size:1.1rem; }
+    .group button { display:block; width:100%; padding:.6rem; margin:.25rem 0; border:1px solid #ccc; background:#fff; cursor:pointer; border-radius:4px; text-align:left; }
+    .group button.selected { border-color:#007bff; background:rgba(0,123,255,.1); }
+    #price { text-align:center; margin-top:1rem; font-size:1.2rem; }
+    #listMats { margin:1rem auto; display:block; }
   </style>
 </head>
+
 <body>
   <div id="configurator">
+    <!--  ➤ VISU  -->
     <div class="viewer">
       <model-viewer
         id="model"
-        src="Tradi_home2_draco2.glb"
+        src="Tadi_home_draco3.glb"
         camera-controls
         auto-rotate
-        background-color="#ffffff"
-      ></model-viewer>
+        background-color="#ffffff">
+      </model-viewer>
+      <button id="listMats">📝 Lister les matériaux</button>
     </div>
+
+    <!--  ➤ OPTIONS  -->
     <div id="features">
       <div class="group" data-cat="bardage">
         <h4>Bardage extérieur</h4>
-        <button data-color="#ffffff" data-cost="0">Blanc (inclus)</button>
-        <button data-color="#8c6a4f" data-cost="799">Chêne foncé +799 €</button>
-        <button data-color="#343a40" data-cost="899">Gris orage +899 €</button>
+        <!-- à remplir après avoir listé les noms exacts -->
       </div>
       <div class="group" data-cat="menuiserie">
         <h4>Menuiserie alu</h4>
-        <button data-color="#ffffff" data-cost="0">Blanc (inclus)</button>
-        <button data-color="#2e2e2e" data-cost="2499">Anthracite +2499 €</button>
       </div>
       <div class="group" data-cat="murs">
         <h4>Peinture murs</h4>
-        <button data-color="#ffffff" data-cost="0">Blanc (inclus)</button>
-        <button data-color="#d6c9b1" data-cost="999">Beige Ares +999 €</button>
-        <button data-color="#e5b79c" data-cost="1499">Ocre Mojave +1499 €</button>
       </div>
       <div class="group" data-cat="pergola">
-        <h4>Pergola bioclimatique</h4>
-        <button data-color="#ffffff" data-cost="8500">Blanc +8500 €</button>
-        <button data-color="#2e2e2e" data-cost="9500">Anthracite +9500 €</button>
+        <h4>Pergola + volets</h4>
       </div>
       <div class="group" data-cat="toiture">
-        <h4>Toiture tôle</h4>
-        <button data-color="#243241" data-cost="0">Bleu ardoise (inclus)</button>
-        <button data-color="#b0b0b0" data-cost="0">Gris acier (inclus)</button>
-        <button data-color="#c0392b" data-cost="1800">Rouge hibiscus +1800 €</button>
+        <h4>Tôles & toiture</h4>
       </div>
+
       <p id="price">Prix total : 170 000 €</p>
     </div>
   </div>
 
   <script type="module">
-    console.log('DOM ready');
-    const basePrice   = 170000;
-    const modelViewer = document.getElementById('model');
-    const priceEl     = document.getElementById('price');
+    // 1) Permet de lister TOUS les noms de matériaux dans la console
+    const btnList = document.getElementById('listMats');
+    const mv       = document.querySelector('model-viewer');
 
-    // on matche les matériaux d'après leur nom exact dans Blender
-    const matchers = {
-      bardage:    name => name.startsWith('bardage'),
-      menuiserie: name => name.startsWith('menuiserie') || /cadre|porte|poigne/.test(name),
-      murs:       name => name.startsWith('murs') || name.startsWith('dalles'),
-      pergola:    name => name.startsWith('pergola') || name.startsWith('sol_pergola') || name.startsWith('volet_pergola'),
-      toiture:    name => name.startsWith('toit')
+    btnList.addEventListener('click', () => {
+      mv.modelReady
+        .then(() => {
+          const mats = mv.model.materials;
+          console.log('🔧 Liste exacte des matériaux dans le GLB :');
+          // affiche clé interne → nom Blender
+          Object.entries(mats).forEach(([key, mat]) => {
+            console.log(key, '→', mat.name);
+          });
+        })
+        .catch(e => console.error(e));
+    });
+
+    // 2) CONFIGURATEUR (à compléter après avoir récupéré vos noms)
+    const basePrice   = 170000;
+    const priceEl     = document.getElementById('price');
+    const materialMap = {
+      bardage:    [ /* 'bardage_1.001','bardage2.001' */ ],
+      menuiserie: [ /* 'menuiserie1','menuiserie1.001', … */ ],
+      murs:       [ /* 'murs','Murs.001','murs.001', … */ ],
+      pergola:    [ /* 'pergola1','sol_pergola.001','volet_pergola.001', … */ ],
+      toiture:    [ /* 'toit1','toit_contour.001', … */ ],
     };
 
-    function hexToRGBA(hex){
-      const v = parseInt(hex.slice(1),16);
-      return [(v>>16&255)/255,(v>>8&255)/255,(v&255)/255,1];
+    function hexToRGBA(hex) {
+      const v = parseInt(hex.slice(1), 16);
+      return [(v >> 16 & 255)/255, (v >> 8 & 255)/255, (v & 255)/255, 1];
     }
 
     const selection = {};
-    modelViewer.addEventListener('load', ()=>{
-      console.log('model loaded');
-      const mats = modelViewer.model.materials;
 
-      document.querySelectorAll('.group').forEach(group=>{
+    mv.addEventListener('load', () => {
+      const mats = mv.model.materials;
+
+      document.querySelectorAll('.group').forEach(group => {
         const cat = group.dataset.cat;
-        group.querySelectorAll('button').forEach(btn=>{
-          btn.addEventListener('click',()=>{
-            // styling
-            group.querySelectorAll('button').forEach(b=>b.classList.remove('selected'));
+        group.querySelectorAll('button').forEach(btn => {
+          btn.addEventListener('click', () => {
+            // visuel
+            group.querySelectorAll('button').forEach(b => b.classList.remove('selected'));
             btn.classList.add('selected');
             // prix
             selection[cat] = Number(btn.dataset.cost);
@@ -104,16 +112,16 @@
             priceEl.textContent = `Prix total : ${total.toLocaleString()} €`;
             // couleur
             const rgba = hexToRGBA(btn.dataset.color);
-            // on applique à TOUS les matériaux qui matchent la catégorie
-            Object.values(mats).forEach(mat=>{
-              if (matchers[cat](mat.name)) {
-                mat.pbrMetallicRoughness.setBaseColorFactor(rgba);
-              }
+            materialMap[cat].forEach(name => {
+              const m = mats[name];
+              if (m) m.pbrMetallicRoughness.setBaseColorFactor(rgba);
+              else  console.warn(`❌ matériau '${name}' introuvable`);
             });
           });
         });
-        // déclenche la 1ʳᵉ option par défaut
-        group.querySelector('button').click();
+        // sélection par défaut
+        const first = group.querySelector('button');
+        if (first) first.click();
       });
     });
   </script>
