@@ -1,180 +1,177 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>Configurateur Tradi'home</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <script type="module"
-    src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js">
-  </script>
+  <meta charset="UTF-8" />
+  <title>Configurateur Tradi’home</title>
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
   <style>
     body {
-      margin:0;
-      font-family:sans-serif;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      padding:1rem;
+      margin: 0;
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: #fafafa;
     }
-    #configurator {
-      display:flex;
-      width:100%;
-      max-width:1200px;
+    main {
+      display: flex;
+      width: 100%;
+      max-width: 1400px;
+      padding: 20px;
+      box-sizing: border-box;
     }
-    .viewer { flex:1; margin-right:1rem }
     model-viewer {
-      width:100%; height:600px; background:#f0f0f0;
+      flex: 1;
+      height: 600px;
+      background-color: #e0e0e0;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     }
-    #features { flex:0 0 300px; }
-    .group { margin-bottom:1rem; }
-    .group h4 { margin:0 0 .5rem; }
-    .group button {
-      display:block;
-      width:100%;
-      padding:.5rem;
-      margin-bottom:.25rem;
-      border:1px solid #ccc;
-      background:#fff;
-      text-align:left;
-      cursor:pointer;
+    .options {
+      width: 300px;
+      margin-left: 20px;
     }
-    .group button.selected {
-      border-color:#007bff;
-      background:#e7f1ff;
+    .options h2 {
+      margin-top: 0;
     }
-    #price {
-      font-weight:bold;
-      margin-top:1rem;
-      text-align:right;
-      width:100%; max-width:1200px;
+    .options button {
+      display: block;
+      width: 100%;
+      margin: 8px 0;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background: white;
+      cursor: pointer;
+      text-align: left;
+    }
+    .options button.active {
+      border-color: #0078d4;
+      background: #e6f0fa;
+    }
+    .total {
+      margin: 20px 0;
+      font-size: 1.2em;
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
-
-<div id="configurator">
-  <div class="viewer">
+  <h1>Configurateur Tradi’home</h1>
+  <main>
+    <!-- 1. Le viewer qui charge le modèle glTF embarqué -->
     <model-viewer
       id="model"
-      src="TRADI2.glb"
+      src="TRADI22.gltf"
       camera-controls
       auto-rotate
-      background-color="#ffffff">
+      reveal
+      ar
+      background-color="#f0f0f0">
     </model-viewer>
-  </div>
-  <div id="features">
 
-    <div class="group" data-cat="bardage">
-      <h4>Bardage extérieur</h4>
-      <button data-color="#ffffff" data-cost="0">Blanc inclus</button>
-      <button data-color="#deb887" data-cost="0">Chêne clair +0 €</button>
-      <button data-color="#333333" data-cost="0">Anthracite fixe +0 €</button>
+    <!-- 2. La colonne d’options -->
+    <div class="options">
+      <h2>Bardage extérieur</h2>
+      <button data-material-index="25" data-color="[1,1,1]">Blanc inclus</button>
+      <button data-material-index="25" data-color="[0.8,0.6,0.4]">Chêne clair +0 €</button>
+      <button data-material-index="26" data-color="[0.2,0.2,0.2]">Anthracite fixe +0 €</button>
+
+      <h2>Peinture murs</h2>
+      <button data-material-index="0" data-color="[1,1,1]">Blanc +0 €</button>
+      <button data-material-index="1" data-color="[0.95,0.85,0.8]">Beige Wes +999 €</button>
+      <button data-material-index="2" data-color="[0.9,0.7,0.5]">Ocre Mojave +1 499 €</button>
+
+      <h2>Menuiserie alu & volets</h2>
+      <button data-material-index="6" data-color="[1,1,1]">Blanc +0 €</button>
+      <button data-material-index="5" data-color="[0.2,0.2,0.2]">Anthracite +2 499 €</button>
+
+      <h2>Pergola bioclimatique + volets</h2>
+      <button data-material-index="27" data-color="[1,1,1]">Blanc +8 500 €</button>
+      <button data-material-index="28" data-color="[0.2,0.2,0.2]">Anthracite +9 500 €</button>
+
+      <div class="total">Prix total : <span id="price">0 €</span></div>
     </div>
+  </main>
 
-    <div class="group" data-cat="murs">
-      <h4>Peinture murs</h4>
-      <button data-color="#ffffff" data-cost="0">Blanc +0 €</button>
-      <button data-color="#f5f5dc" data-cost="999">Beige Wes +999 €</button>
-      <button data-color="#cd853f" data-cost="1499">Ocre Mojave +1 499 €</button>
-    </div>
+  <script>
+    (function() {
+      const mv = document.querySelector('#model');
+      const buttons = Array.from(document.querySelectorAll('.options button'));
+      const priceEl = document.getElementById('price');
+      let total = 0;
 
-    <div class="group" data-cat="menuiserie">
-      <h4>Menuiserie alu & volets</h4>
-      <button data-color="#ffffff" data-cost="0">Blanc +0 €</button>
-      <button data-color="#333333" data-cost="2499">Anthracite +2 499 €</button>
-    </div>
+      // tarifs associés à chaque bouton (ordre identique)
+      const tarifs = {
+        // material-index : price delta
+        25: {0: 0, 1: 0, 2: 0},   // bardage (indexes 25 & 26 partagés ci-dessous)
+        26: {0: 0, 1: 0, 2: 0},
+        0:  {0: 0, 1: 999, 2: 1499},
+        1:  {0: 0, 1: 999, 2: 1499},
+        2:  {0: 0, 1: 999, 2: 1499},
+        5:  {0: 0, 1: 2499},
+        6:  {0: 0, 1: 2499},
+        27: {0: 0, 1: 8500},
+        28: {0: 0, 1: 8500},
+        29: {0: 0, 1: 9500},
+        30: {0: 0, 1: 9500}
+      };
 
-    <div class="group" data-cat="pergolat">
-      <h4>Pergola + volets</h4>
-      <button data-color="#ffffff" data-cost="8500">Blanc +8 500 €</button>
-      <button data-color="#333333" data-cost="9500">Anthracite +9 500 €</button>
-    </div>
+      // quand le modèle est prêt, on active les boutons
+      mv.addEventListener('load', () => {
+        console.log('Modèle chargé. Matériaux disponibles :');
+        Object.entries(mv.model.materials).forEach(([idx, mat]) => {
+          console.log(idx, '→', mat.name);
+        });
 
-  </div>
-</div>
-
-<p id="price">Prix total : 0 €</p>
-
-<script>
-(function(){
-  const mv = document.getElementById('model');
-  const priceEl = document.getElementById('price');
-
-  // 1️⃣ Quand le modèle est chargé, on log la liste des mat (index → mat.name)
-  mv.addEventListener('load', ()=> {
-    console.clear();
-    console.log('model loaded');
-    console.log('🔧 Materials in GLB: clé interne → mat.name');
-    Object.entries(mv.model.materials)
-      .forEach(([idx, m]) => console.log(idx, '→', m.name));
-  });
-
-  // 2️⃣ Les bons INDICES pour chaque catégorie (d’après tes screenshots)
-  const materialIndices = {
-    bardage:   [15, 16],            // poutrine01, poutrine02
-    murs:      [0, 39, 78],         // Murs, Murs.001, Murs.002
-    menuiserie:[   // encadrements, portes, volets
-      7,46,85,  // encadrement et ses variantes
-      2,41,80,  // cadre_porte_fenetre
-      4,43,82,  // porte
-      5,44,83   // Volets
-    ],
-    pergolat:  [26,66,106, 24,64,104]  // volet_pergola + poutres et variantes
-  };
-
-  // Convertit "#rrggbb" → [r,g,b,a]
-  function hexToFactor(h){
-    const v = parseInt(h.slice(1),16);
-    return [
-      ((v>>16)&255)/255,
-      ((v>>8)&255)/255,
-      (v&255)/255,
-      1
-    ];
-  }
-
-  // Applique une couleur à TOUTES les indices de la catégorie
-  function applyColor(cat, hex){
-    const list = materialIndices[cat] || [];
-    const factor = hexToFactor(hex);
-    list.forEach(i => {
-      const mat = mv.model.materials[i];
-      if(!mat){
-        console.warn(`⚠ Indice ${i} introuvable pour ${cat}`);
-      } else {
-        mat.pbrMetallicRoughness.setBaseColorFactor(factor);
-      }
-    });
-  }
-
-  // Met à jour le prix total
-  function updatePrice(){
-    const total = Array.from(
-      document.querySelectorAll('button.selected')
-    ).reduce((sum,btn)=> sum + Number(btn.dataset.cost), 0);
-    priceEl.textContent = 
-      `Prix total : ${total.toLocaleString('fr-FR')} €`;
-  }
-
-  // 3️⃣ On branche les UI
-  document.querySelectorAll('#features .group').forEach(group=>{
-    const cat = group.dataset.cat;
-    group.querySelectorAll('button').forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        // UI
-        group.querySelectorAll('button')
-             .forEach(b=> b.classList.remove('selected'));
-        btn.classList.add('selected');
-        // Couleur
-        applyColor(cat, btn.dataset.color);
-        // Prix
-        updatePrice();
+        // initialiser la première option de chaque groupe
+        const groups = {};
+        buttons.forEach(btn => {
+          const idx = btn.dataset.materialIndex;
+          if (!groups[idx]) {
+            btn.classList.add('active');
+            groups[idx] = btn;
+            // appliquer sa couleur
+            applyColor(idx, JSON.parse(btn.dataset.color));
+            // ajouter son prix
+            total += tarifs[idx][0] || 0;
+          }
+          // écouter les clics
+          btn.addEventListener('click', () => {
+            // désactiver l’autre du même material-index
+            buttons.filter(b => b.dataset.materialIndex === idx)
+                   .forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            // recolorer
+            applyColor(idx, JSON.parse(btn.dataset.color));
+            // recalculer prix
+            recalcPrice();
+          });
+        });
+        priceEl.textContent = total + ' €';
       });
-    });
-  });
 
-})();
-</script>
+      function applyColor(materialIndex, rgbArray) {
+        const mat = mv.model.materials[materialIndex];
+        if (mat) {
+          mat.pbrMetallicRoughness.setBaseColorFactor([...rgbArray, 1]);
+        } else {
+          console.warn(`Matériau ${materialIndex} introuvable`);
+        }
+      }
 
+      function recalcPrice() {
+        total = 0;
+        buttons.filter(b => b.classList.contains('active'))
+               .forEach(b => {
+                 const idx = b.dataset.materialIndex;
+                 const group = buttons.filter(x => x.dataset.materialIndex === idx);
+                 const selIndex = group.indexOf(b);
+                 total += tarifs[idx][selIndex] || 0;
+               });
+        priceEl.textContent = total + ' €';
+      }
+    })();
+  </script>
 </body>
 </html>
