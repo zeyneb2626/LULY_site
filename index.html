@@ -2,127 +2,129 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
   <title>Configurateur Tradi’home</title>
-
-  <!-- model-viewer -->
+  <!-- importer model-viewer -->
   <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
-
   <style>
-    body { margin:0; font-family: sans-serif; background:#f0f0f0; }
-    #configurator { display:flex; max-width:1200px; margin:2rem auto; gap:2rem; }
-    .viewer { flex:1; background:#fff; padding:1rem; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,.1); }
-    model-viewer { width:100%; height:600px; }
-    #features { width:300px; display:flex; flex-direction:column; gap:1rem; }
-    .group { background:#fff; padding:1rem; border-radius:8px; box-shadow:0 1px 4px rgba(0,0,0,.1); }
-    .group h4 { margin:0 0 .5rem; font-size:1.1rem; }
-    .group button { display:block; width:100%; padding:.6rem; margin:.25rem 0; border:1px solid #ccc; background:#fff; cursor:pointer; border-radius:4px; text-align:left; }
-    .group button.selected { border-color:#007bff; background:rgba(0,123,255,.1); }
-    #price { text-align:center; margin-top:1rem; font-size:1.2rem; }
-    #listMats { margin:1rem auto; display:block; }
+    body { font-family: sans-serif; margin: 0; padding: 0; }
+    #configurator { display: flex; height: 100vh; }
+    .viewer { flex: 1; }
+    .features { width: 300px; padding: 1rem; box-sizing: border-box; overflow-y: auto; }
+    .group { margin-bottom: 1.5rem; }
+    .group h4 { margin: .5rem 0; }
+    .group button { display: block; width: 100%; margin-bottom: .5rem; padding: .5rem; border: 1px solid #ccc; background: #fff; cursor: pointer; text-align: left; }
+    .group button.selected { border-color: #007aff; }
+    #price { margin-top: 2rem; font-weight: bold; }
+    #list-mats { margin-top: 2rem; padding: .5rem; width: 100%; }
   </style>
 </head>
-
 <body>
   <div id="configurator">
-    <!--  ➤ VISU  -->
+    <!-- zone 3D -->
     <div class="viewer">
       <model-viewer
         id="model"
         src="Tadi_home_draco3.glb"
+        alt="Maison 3D"
         camera-controls
         auto-rotate
-        background-color="#ffffff">
+        background-color="#ffffff"
+        style="width:100%; height:100%;">
       </model-viewer>
-      <button id="listMats">📝 Lister les matériaux</button>
     </div>
 
-    <!--  ➤ OPTIONS  -->
-    <div id="features">
+    <!-- zone UI -->
+    <div class="features">
+      <!-- Exemples de groupes : adaptez / dupliquez -->
       <div class="group" data-cat="bardage">
-        <h4>Bardage extérieur</h4>
-        <!-- à remplir après avoir listé les noms exacts -->
-      </div>
-      <div class="group" data-cat="menuiserie">
-        <h4>Menuiserie alu</h4>
-      </div>
-      <div class="group" data-cat="murs">
-        <h4>Peinture murs</h4>
-      </div>
-      <div class="group" data-cat="pergola">
-        <h4>Pergola + volets</h4>
-      </div>
-      <div class="group" data-cat="toiture">
-        <h4>Tôles & toiture</h4>
+        <h4>Bardage</h4>
+        <button data-color="#ffffff" data-cost="0">Blanc (0 €)</button>
+        <button data-color="#8c6a4f" data-cost="799">Chêne foncé (+799 €)</button>
+        <button data-color="#343a40" data-cost="899">Gris orage (+899 €)</button>
       </div>
 
+      <!-- À vous de créer les autres groupes : menuiserie, gouttière, pergola, peinture, toiture… -->
+
       <p id="price">Prix total : 170 000 €</p>
+      <button id="list-mats">📋 Lister les matériaux</button>
     </div>
   </div>
 
   <script type="module">
-    // 1) Permet de lister TOUS les noms de matériaux dans la console
-    const btnList = document.getElementById('listMats');
-    const mv       = document.querySelector('model-viewer');
+    document.addEventListener('DOMContentLoaded', () => {
+      const mv      = document.getElementById('model');
+      const priceEl = document.getElementById('price');
+      const listBtn = document.getElementById('list-mats');
+      const basePrice = 170000;
+      const selection = {};
 
-    btnList.addEventListener('click', () => {
-      mv.modelReady
-        .then(() => {
+      // passe du hex au [r,g,b,a]
+      function hexToRGBA(hex) {
+        const v = parseInt(hex.slice(1), 16);
+        return [(v >> 16 & 255)/255, (v >> 8 & 255)/255, (v & 255)/255, 1];
+      }
+
+      // matMap vide → on remplira après listing
+      const materialMap = {
+        bardage:    [],
+        menuiserie: [],
+        gouttiere:  [],
+        pergola:    [],
+        peinture:   [],
+        toiture:    []
+      };
+
+      // === 1) bouton pour lister les matériaux dans la Console ===
+      listBtn.addEventListener('click', () => {
+        mv.addEventListener('load', () => {
           const mats = mv.model.materials;
-          console.log('🔧 Liste exacte des matériaux dans le GLB :');
-          // affiche clé interne → nom Blender
-          Object.entries(mats).forEach(([key, mat]) => {
-            console.log(key, '→', mat.name);
-          });
-        })
-        .catch(e => console.error(e));
-    });
+          console.log('🔗 Clé interne → nom Blender :');
+          Object.entries(mats).forEach(([key, mat]) =>
+            console.log(`${key} → ${mat.name}`)
+          );
+        }, { once: true });
+        // force un re-chargement pour déclencher l’événement
+        mv.load();
+      });
 
-    // 2) CONFIGURATEUR (à compléter après avoir récupéré vos noms)
-    const basePrice   = 170000;
-    const priceEl     = document.getElementById('price');
-    const materialMap = {
-      bardage:    [ /* 'bardage_1.001','bardage2.001' */ ],
-      menuiserie: [ /* 'menuiserie1','menuiserie1.001', … */ ],
-      murs:       [ /* 'murs','Murs.001','murs.001', … */ ],
-      pergola:    [ /* 'pergola1','sol_pergola.001','volet_pergola.001', … */ ],
-      toiture:    [ /* 'toit1','toit_contour.001', … */ ],
-    };
+      // === 2) quand le modèle est chargé la première fois ===
+      mv.addEventListener('load', () => {
+        const mats = mv.model.materials;
+        // pour chaque groupe de boutons…
+        document.querySelectorAll('.group').forEach(group => {
+          const cat = group.dataset.cat;
+          const buttons = group.querySelectorAll('button');
 
-    function hexToRGBA(hex) {
-      const v = parseInt(hex.slice(1), 16);
-      return [(v >> 16 & 255)/255, (v >> 8 & 255)/255, (v & 255)/255, 1];
-    }
+          buttons.forEach(btn => {
+            btn.addEventListener('click', () => {
+              // 2.1) visuel
+              buttons.forEach(b => b.classList.remove('selected'));
+              btn.classList.add('selected');
 
-    const selection = {};
+              // 2.2) calcul du prix
+              selection[cat] = Number(btn.dataset.cost);
+              const total = Object.values(selection).reduce((a,b)=>a+b, basePrice);
+              priceEl.textContent = `Prix total : ${total.toLocaleString()} €`;
 
-    mv.addEventListener('load', () => {
-      const mats = mv.model.materials;
-
-      document.querySelectorAll('.group').forEach(group => {
-        const cat = group.dataset.cat;
-        group.querySelectorAll('button').forEach(btn => {
-          btn.addEventListener('click', () => {
-            // visuel
-            group.querySelectorAll('button').forEach(b => b.classList.remove('selected'));
-            btn.classList.add('selected');
-            // prix
-            selection[cat] = Number(btn.dataset.cost);
-            const total = Object.values(selection).reduce((a,b)=>a+b, basePrice);
-            priceEl.textContent = `Prix total : ${total.toLocaleString()} €`;
-            // couleur
-            const rgba = hexToRGBA(btn.dataset.color);
-            materialMap[cat].forEach(name => {
-              const m = mats[name];
-              if (m) m.pbrMetallicRoughness.setBaseColorFactor(rgba);
-              else  console.warn(`❌ matériau '${name}' introuvable`);
+              // 2.3) couleur
+              const rgba = hexToRGBA(btn.dataset.color);
+              (materialMap[cat]||[]).forEach(name => {
+                const m = mats[name];
+                if (m) {
+                  m.pbrMetallicRoughness.setBaseColorFactor(rgba);
+                } else {
+                  console.warn(`❌ matériau '${name}' pas trouvé`);
+                }
+              });
             });
           });
+
+          // auto-click 1ᵉ bouton pour valeur par défaut
+          if (buttons[0]) buttons[0].click();
         });
-        // sélection par défaut
-        const first = group.querySelector('button');
-        if (first) first.click();
       });
+
     });
   </script>
 </body>
