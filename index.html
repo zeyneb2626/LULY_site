@@ -2,176 +2,250 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <title>Configurateur Tradi’home</title>
-  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Configurateur 3D - Maison TRADI22</title>
+  <!-- Include Model-Viewer library -->
+  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
   <style>
-    body {
+    /* Basic reset and layout */
+    html, body {
       margin: 0;
-      font-family: sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      background: #fafafa;
+      padding: 0;
+      height: 100%;
+      background-color: #f8f8f8;
     }
-    main {
+    .container {
       display: flex;
+      height: 100%;
+    }
+    .model-container {
+      flex: 1;
+      position: relative;
+      background-color: #f8f8f8;
+    }
+    .model-container model-viewer {
       width: 100%;
-      max-width: 1400px;
-      padding: 20px;
+      height: 100%;
+    }
+    .configurator {
+      width: 300px;
+      background-color: #ffffff;
+      padding: 1rem;
       box-sizing: border-box;
     }
-    model-viewer {
-      flex: 1;
-      height: 600px;
-      background-color: #e0e0e0;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    .configurator h2 {
+      font-family: sans-serif;
+      font-size: 1.1em;
+      margin: 1em 0 0.5em;
     }
-    .options {
-      width: 300px;
-      margin-left: 20px;
-    }
-    .options h2 {
-      margin-top: 0;
-    }
-    .options button {
+    .options label {
       display: block;
-      width: 100%;
-      margin: 8px 0;
-      padding: 10px;
+      font-family: sans-serif;
       border: 1px solid #ccc;
-      border-radius: 4px;
-      background: white;
+      padding: 8px;
+      margin-bottom: 0.5em;
       cursor: pointer;
-      text-align: left;
     }
-    .options button.active {
-      border-color: #0078d4;
-      background: #e6f0fa;
+    .options input[type="radio"] {
+      display: none;
     }
-    .total {
-      margin: 20px 0;
-      font-size: 1.2em;
+    .options label.selected {
+      border-color: #007BFF;
+      background-color: #E7F1FF;
+    }
+    #total-price {
+      font-family: sans-serif;
       font-weight: bold;
+      text-align: right;
+      margin-top: 1em;
+    }
+    #listMaterials {
+      font-family: sans-serif;
+      margin-top: 1em;
+      padding: 5px 10px;
     }
   </style>
 </head>
 <body>
-  <h1>Configurateur Tradi’home</h1>
-  <main>
-    <!-- 1. Le viewer qui charge le modèle glTF embarqué -->
-    <model-viewer
-      id="model"
-      src="TRADI22.gltf"
-      camera-controls
-      auto-rotate
-      reveal
-      ar
-      background-color="#f0f0f0">
-    </model-viewer>
-
-    <!-- 2. La colonne d’options -->
-    <div class="options">
+  <div class="container">
+    <!-- 3D Model Viewer -->
+    <div class="model-container">
+      <model-viewer id="viewer"
+        src="TRADI22.gltf"
+        alt="Maison 3D TRADI22"
+        camera-controls
+        shadow-intensity="1"
+        exposure="1">
+      </model-viewer>
+    </div>
+    <!-- Configurator Panel -->
+    <div class="configurator">
       <h2>Bardage extérieur</h2>
-      <button data-material-index="25" data-color="[1,1,1]">Blanc inclus</button>
-      <button data-material-index="25" data-color="[0.8,0.6,0.4]">Chêne clair +0 €</button>
-      <button data-material-index="26" data-color="[0.2,0.2,0.2]">Anthracite fixe +0 €</button>
+      <div class="options">
+        <label class="selected">
+          <input type="radio" name="bardage" value="blanc" data-price="0" checked />
+          Blanc inclus
+        </label>
+        <label>
+          <input type="radio" name="bardage" value="chene" data-price="0" />
+          Chêne clair +0 €
+        </label>
+        <label>
+          <input type="radio" name="bardage" value="anthracite" data-price="0" />
+          Anthracite fixe +0 €
+        </label>
+      </div>
 
       <h2>Peinture murs</h2>
-      <button data-material-index="0" data-color="[1,1,1]">Blanc +0 €</button>
-      <button data-material-index="1" data-color="[0.95,0.85,0.8]">Beige Wes +999 €</button>
-      <button data-material-index="2" data-color="[0.9,0.7,0.5]">Ocre Mojave +1 499 €</button>
+      <div class="options">
+        <label class="selected">
+          <input type="radio" name="murs" value="blanc" data-price="0" checked />
+          Blanc +0 €
+        </label>
+        <label>
+          <input type="radio" name="murs" value="beige" data-price="999" />
+          Beige Wes +999 €
+        </label>
+        <label>
+          <input type="radio" name="murs" value="ocre" data-price="1499" />
+          Ocre Mojave +1 499 €
+        </label>
+      </div>
 
       <h2>Menuiserie alu & volets</h2>
-      <button data-material-index="6" data-color="[1,1,1]">Blanc +0 €</button>
-      <button data-material-index="5" data-color="[0.2,0.2,0.2]">Anthracite +2 499 €</button>
+      <div class="options">
+        <label class="selected">
+          <input type="radio" name="menuiserie" value="blanc" data-price="0" checked />
+          Blanc +0 €
+        </label>
+        <label>
+          <input type="radio" name="menuiserie" value="anthracite" data-price="2499" />
+          Anthracite +2 499 €
+        </label>
+      </div>
 
-      <h2>Pergola bioclimatique + volets</h2>
-      <button data-material-index="27" data-color="[1,1,1]">Blanc +8 500 €</button>
-      <button data-material-index="28" data-color="[0.2,0.2,0.2]">Anthracite +9 500 €</button>
+      <h2>Pergola + volets</h2>
+      <div class="options">
+        <!-- No default selected for pergola, so user can leave it unselected (no pergola) -->
+        <label>
+          <input type="radio" name="pergola" value="blanc" data-price="8500" />
+          Blanc +8 500 €
+        </label>
+        <label>
+          <input type="radio" name="pergola" value="anthracite" data-price="9500" />
+          Anthracite +9 500 €
+        </label>
+      </div>
 
-      <div class="total">Prix total : <span id="price">0 €</span></div>
+      <div id="total-price">Prix total : 0 €</div>
+      <button id="listMaterials">Lister les matériaux</button>
     </div>
-  </main>
+  </div>
 
   <script>
-    (function() {
-      const mv = document.querySelector('#model');
-      const buttons = Array.from(document.querySelectorAll('.options button'));
-      const priceEl = document.getElementById('price');
+    const viewer = document.getElementById('viewer');
+    const totalPriceElem = document.getElementById('total-price');
+
+    // Define colors (RGBA with values 0-1)
+    const anthColor = [41/255, 49/255, 51/255, 1];  // Anthracite (dark grey)
+    const colors = {
+      bardage: {
+        blanc:    [1, 1, 1, 1],                   // Blanc
+        chene:    [213/255, 181/255, 79/255, 1],  // Chêne clair (bois clair)
+        anthracite: anthColor                    // Anthracite fixe
+      },
+      murs: {
+        blanc:    [1, 1, 1, 1],
+        beige:    [205/255, 193/255, 179/255, 1], // Beige Wes
+        ocre:     [227/255, 184/255, 165/255, 1]  // Ocre Mojave
+      },
+      menuiserie: {
+        blanc:    [1, 1, 1, 1],
+        anthracite: anthColor
+      },
+      pergola: {
+        blanc:    [1, 1, 1, 1],
+        anthracite: anthColor
+      }
+    };
+
+    // Mapping of material indices for each category
+    const materialIndices = {
+      bardage:    [54, 55],
+      murs:       [0, 40, 79],
+      menuiserie: [6, 46, 86, 2, 42, 82, 3, 43, 83, 5, 45, 85],
+      pergola:    [26, 65, 105, 27, 66, 106]
+    };
+
+    // Helper to format number with spaces (French format)
+    function formatPrice(num) {
+      return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+    }
+
+    // Update total price by summing all selected options
+    function updateTotalPrice() {
       let total = 0;
-
-      // tarifs associés à chaque bouton (ordre identique)
-      const tarifs = {
-        // material-index : price delta
-        25: {0: 0, 1: 0, 2: 0},   // bardage (indexes 25 & 26 partagés ci-dessous)
-        26: {0: 0, 1: 0, 2: 0},
-        0:  {0: 0, 1: 999, 2: 1499},
-        1:  {0: 0, 1: 999, 2: 1499},
-        2:  {0: 0, 1: 999, 2: 1499},
-        5:  {0: 0, 1: 2499},
-        6:  {0: 0, 1: 2499},
-        27: {0: 0, 1: 8500},
-        28: {0: 0, 1: 8500},
-        29: {0: 0, 1: 9500},
-        30: {0: 0, 1: 9500}
-      };
-
-      // quand le modèle est prêt, on active les boutons
-      mv.addEventListener('load', () => {
-        console.log('Modèle chargé. Matériaux disponibles :');
-        Object.entries(mv.model.materials).forEach(([idx, mat]) => {
-          console.log(idx, '→', mat.name);
-        });
-
-        // initialiser la première option de chaque groupe
-        const groups = {};
-        buttons.forEach(btn => {
-          const idx = btn.dataset.materialIndex;
-          if (!groups[idx]) {
-            btn.classList.add('active');
-            groups[idx] = btn;
-            // appliquer sa couleur
-            applyColor(idx, JSON.parse(btn.dataset.color));
-            // ajouter son prix
-            total += tarifs[idx][0] || 0;
-          }
-          // écouter les clics
-          btn.addEventListener('click', () => {
-            // désactiver l’autre du même material-index
-            buttons.filter(b => b.dataset.materialIndex === idx)
-                   .forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            // recolorer
-            applyColor(idx, JSON.parse(btn.dataset.color));
-            // recalculer prix
-            recalcPrice();
-          });
-        });
-        priceEl.textContent = total + ' €';
+      document.querySelectorAll('input[type=radio]:checked').forEach(input => {
+        const price = parseInt(input.dataset.price) || 0;
+        total += price;
       });
+      totalPriceElem.textContent = "Prix total : " + formatPrice(total) + " €";
+    }
 
-      function applyColor(materialIndex, rgbArray) {
-        const mat = mv.model.materials[materialIndex];
-        if (mat) {
-          mat.pbrMetallicRoughness.setBaseColorFactor([...rgbArray, 1]);
-        } else {
-          console.warn(`Matériau ${materialIndex} introuvable`);
+    // Apply material color changes
+    function applyMaterialColor(category, value) {
+      const color = colors[category][value];
+      if (!viewer.model) {
+        // Model not yet loaded; wait for load event
+        return;
+      }
+      const indices = materialIndices[category] || [];
+      indices.forEach(index => {
+        try {
+          viewer.model.materials[index].pbrMetallicRoughness.setBaseColorFactor(color);
+        } catch (err) {
+          console.warn(`Matériau ${index} introuvable ou non modifiable.`);
         }
-      }
+      });
+    }
 
-      function recalcPrice() {
-        total = 0;
-        buttons.filter(b => b.classList.contains('active'))
-               .forEach(b => {
-                 const idx = b.dataset.materialIndex;
-                 const group = buttons.filter(x => x.dataset.materialIndex === idx);
-                 const selIndex = group.indexOf(b);
-                 total += tarifs[idx][selIndex] || 0;
-               });
-        priceEl.textContent = total + ' €';
+    // Event listener for any option change
+    document.querySelectorAll('.options input[type=radio]').forEach(input => {
+      input.addEventListener('change', (e) => {
+        const target = e.target;
+        const category = target.name;
+        const value = target.value;
+        // Update selected label highlight
+        const container = target.parentElement.parentElement;
+        container.querySelectorAll('label').forEach(lbl => lbl.classList.remove('selected'));
+        target.parentElement.classList.add('selected');
+        // Apply the color change for this category
+        applyMaterialColor(category, value);
+        // Update total price display
+        updateTotalPrice();
+      });
+    });
+
+    // Button to list materials in console (index : name)
+    document.getElementById('listMaterials').addEventListener('click', () => {
+      if (!viewer.model) {
+        console.log("Le modèle 3D n'est pas encore chargé.");
+        return;
       }
-    })();
+      console.log("Liste des matériaux (index : nom) :");
+      viewer.model.materials.forEach((mat, index) => {
+        console.log(index, ":", mat.name || "(sans nom)");
+      });
+    });
+
+    // Optional: wait for model to load, then apply default selections (if needed)
+    viewer.addEventListener('load', () => {
+      // Ensure initial selections are applied to model
+      document.querySelectorAll('input[type=radio]:checked').forEach(input => {
+        applyMaterialColor(input.name, input.value);
+      });
+    });
   </script>
 </body>
 </html>
+
